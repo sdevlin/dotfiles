@@ -11,6 +11,7 @@ export HISTCONTROL='ignoredups'
 
 psgrep() { ps ax | grep -v grep | grep $1; }
 cmdfu() { wget -qO - "http://www.commandlinefu.com/commands/matching/$@/$(echo -n "$@" | openssl base64)/plaintext"; }
+print_path() { echo $PATH | tr ':' '\n'; }
 
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
