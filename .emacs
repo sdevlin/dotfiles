@@ -3,7 +3,7 @@
 
 (require 'cl)
 
-(add-to-list 'load-path "~/.emacs.d")
+(add-to-list 'load-path "~/elisp")
 
 (setq
  inhibit-startup-message t
