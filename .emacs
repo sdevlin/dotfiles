@@ -3,7 +3,7 @@
 
 (require 'cl)
 
-(add-to-list 'load-path "~/elisp")
+(add-to-list 'load-path "~/.emacs.d")
 
 (setq
  inhibit-startup-message t
@@ -42,10 +42,6 @@
 
 (ido-mode t)
 
-;; doesn't work on console
-(require 'windmove)
-(windmove-default-keybindings 'meta)
-
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 (setq holiday-other-holidays
@@ -62,10 +58,15 @@
 (defun turn-off-echo ()
   (setq comint-process-echoes t))
 
+(require 'hi-lock)
+(add-to-list 'hi-lock-face-defaults "hi-red")
+
 (add-hook 'inferior-python-mode-hook 'turn-off-echo)
 
-(require 'pretty-lambdada)
-(pretty-lambda-for-modes)
+(setq inferior-lisp-program "sbcl")
+
+(require 'quack)
+(setq scheme-program-name "racket")
 
 (defun eshell/emacs (&rest args)
   "Open a file in emacs. Some habits die hard."
@@ -77,6 +78,7 @@
 
 (setq
  eshell-banner-message ""
+ eshell-pwd-convert-function #'expand-file-name
  ;; important: eshell-prompt-function and eshell-prompt-regexp must match
  eshell-prompt-function
  (lambda ()
@@ -92,6 +94,6 @@
                   pwd
                 (eshell/basename pwd)))
           (sigil (if (= (user-uid) 0) "#" "$")))
-     (concat user "@" host ":" wd " " sigil " ")))
+     (format "%s@%s:%s %s " user host wd sigil)))
  eshell-prompt-regexp "^[^#$\n]* [#$] ")
 (eshell)
