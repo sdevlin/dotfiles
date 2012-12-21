@@ -55,14 +55,19 @@
           (lambda ()
             (setq calendar-mark-holidays-flag t)))
 
-(defun turn-off-echo ()
-  (setq comint-process-echoes t))
-
 (require 'hi-lock)
 (add-to-list 'hi-lock-face-defaults "hi-red")
 
+(defun turn-off-echo ()
+  (setq comint-process-echoes t))
+
 (add-hook 'inferior-python-mode-hook 'turn-off-echo)
 
+;; is this the best way to do this?
+(add-hook 'lisp-mode-hook
+          (lambda ()
+            (set (make-local-variable 'lisp-indent-function)
+                 'common-lisp-indent-function)))
 (setq inferior-lisp-program "sbcl")
 
 (require 'quack)
