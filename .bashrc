@@ -18,7 +18,7 @@ alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 alias cuts='cut -d " "'
 alias cal='cal -3'
-alias whatsmyip='curl ifconfig.me'
+alias whereami='curl ifconfig.me'
 alias e='emacsclient -c'
 
 fizzbuzz() {
@@ -27,10 +27,6 @@ fizzbuzz() {
         $0 % 3 == 0 { print "fizz"; next }
         $0 % 5 == 0 { print "buzz"; next }
         1';
-}
-
-infamy() {
-    cal -3 7 12 1941
 }
 
 PS1='\u@\h:\W \$ '

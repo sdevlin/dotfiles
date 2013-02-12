@@ -1,24 +1,11 @@
-(require 'package)
-(package-initialize)
-
 (require 'cl)
 
-(add-to-list 'load-path "~/elisp")
+(add-to-list 'load-path "~/emacs")
 
-(setq
- inhibit-startup-message t
- inhibit-startup-echo-area-message t)
-
-(if (fboundp 'scroll-bar-mode)
-    (scroll-bar-mode -1))
-(if (fboundp 'tool-bar-mode)
-    (tool-bar-mode -1))
-(menu-bar-mode -1)
-(blink-cursor-mode -1)
-(column-number-mode t)
-
-(require 'uniquify)
-(setq uniquify-buffer-name-style 'post-forward)
+(when (display-graphic-p)
+  (set-face-attribute 'default nil
+                      :family "DejaVu Sans Mono")
+  (color-theme-solarized 'dark))
 
 (global-set-key "\C-x\C-m" 'execute-extended-command)
 (global-set-key "\C-w" 'backward-kill-word)
@@ -28,32 +15,12 @@
 
 (put 'set-goal-column 'disabled nil)
 
-(setq-default indent-tabs-mode nil)
-(setq require-final-newline t)
-
-(setq
- backup-directory-alist `((".*" . ,temporary-file-directory))
- auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
-
-(setq package-archives
-      '(("marmalade" . "http://marmalade-repo.org/packages/")
-        ("ELPA" . "http://tromey.com/elpa/")
-        ("gnu" . "http://elpa.gnu.org/packages/")))
+(setq custom-file "~/.emacs-custom.el")
+(load custom-file)
 
 (ido-mode t)
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
-
-(setq holiday-other-holidays
-      '((holiday-fixed 2 23 "Birth of the Case")
-        (holiday-fixed 3 25 "Mom's Birthday")
-        (holiday-fixed 2 24 "Dad's Birthday")
-        (holiday-fixed 7 19 "Maire's Birthday")
-        (holiday-fixed 8 18 "Nora's Birthday")
-        (holiday-fixed 11 20 "My Birthday")))
-(add-hook 'calendar-mode-hook
-          (lambda ()
-            (setq calendar-mark-holidays-flag t)))
 
 (require 'hi-lock)
 (add-to-list 'hi-lock-face-defaults "hi-red")
@@ -63,15 +30,34 @@
 
 (add-hook 'inferior-python-mode-hook 'turn-off-echo)
 
-;; is this the best way to do this?
-(add-hook 'lisp-mode-hook
-          (lambda ()
-            (set (make-local-variable 'lisp-indent-function)
-                 'common-lisp-indent-function)))
-(setq inferior-lisp-program "sbcl")
+(when (display-graphic-p)
+  (add-hook 'inf-ruby-mode-hook 'turn-off-echo))
 
-(require 'quack)
-(setq scheme-program-name "racket")
+(add-hook 'lisp-mode-hook
+          #'(lambda ()
+              (set (make-local-variable 'lisp-indent-function)
+                   'common-lisp-indent-function)))
+
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation-mode)
+
+(defun add-hooks (hooks function &optional append local)
+  (dolist (hook hooks)
+    (add-hook hook function append local)))
+
+(add-hooks '(lisp-mode-hook
+             emacs-lisp-mode-hook
+             scheme-mode-hook
+             c-mode-common-hook
+             ruby-mode-hook)
+           #'(lambda ()
+               (local-set-key (kbd "RET")
+                              'reindent-then-newline-and-indent)))
+
+(autoload 'enable-paredit-mode "paredit")
+(add-hooks '(lisp-mode-hook
+             emacs-lisp-mode-hook
+             scheme-mode-hook)
+           'enable-paredit-mode)
 
 (defun eshell/emacs (&rest args)
   "Open a file in emacs. Some habits die hard."
@@ -81,24 +67,4 @@
                               (eshell-flatten-list (reverse args)))))
   nil)
 
-(setq
- eshell-banner-message ""
- eshell-pwd-convert-function #'expand-file-name
- ;; important: eshell-prompt-function and eshell-prompt-regexp must match
- eshell-prompt-function
- (lambda ()
-   (let* ((user (or (getenv "USER")
-                    user-login-name
-                    "sean"))
-          (full-host (or (getenv "HOSTNAME")
-                         system-name
-                         "unknown"))
-          (host (first (split-string full-host "\\.")))
-          (pwd (abbreviate-file-name (eshell/pwd)))
-          (wd (if (string= pwd "/")
-                  pwd
-                (eshell/basename pwd)))
-          (sigil (if (= (user-uid) 0) "#" "$")))
-     (format "%s@%s:%s %s " user host wd sigil)))
- eshell-prompt-regexp "^[^#$\n]* [#$] ")
 (eshell)
