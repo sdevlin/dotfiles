@@ -2,10 +2,12 @@
 
 (add-to-list 'load-path "~/emacs")
 
+(load "custom")
+
 (when (display-graphic-p)
   (set-face-attribute 'default nil
                       :family "DejaVu Sans Mono")
-  (color-theme-solarized 'dark))
+  (add-hook 'after-init-hook 'color-theme-solarized-dark))
 
 (global-set-key "\C-x\C-m" 'execute-extended-command)
 (global-set-key "\C-w" 'backward-kill-word)
@@ -14,9 +16,6 @@
 (global-set-key "\C-x\C-b" 'buffer-menu)
 
 (put 'set-goal-column 'disabled nil)
-
-(setq custom-file "~/.emacs-custom.el")
-(load custom-file)
 
 (ido-mode t)
 

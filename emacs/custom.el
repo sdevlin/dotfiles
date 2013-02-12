@@ -8,6 +8,7 @@
  '(blink-cursor-mode nil)
  '(calendar-mark-holidays-flag t)
  '(column-number-mode t)
+ '(custom-file "~/emacs/custom.el")
  '(eshell-banner-message "")
  '(eshell-prompt-function (lambda nil (let* ((user (or (getenv "USER") user-login-name "sean")) (full-host (or (getenv "HOSTNAME") system-name "unknown")) (host (first (split-string full-host "\\."))) (pwd (abbreviate-file-name (eshell/pwd))) (wd (if (string= pwd "/") pwd (eshell/basename pwd))) (sigil (if (= (user-uid) 0) "#" "$"))) (format "%s@%s:%s %s " user host wd sigil))))
  '(eshell-prompt-regexp "^[^#$]* [#$] ")
