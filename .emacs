@@ -1,31 +1,35 @@
 (require 'cl)
 
-(add-to-list 'load-path "~/emacs")
+(defvar emacs-root "~/")
+(labels ((add-path (path)
+                   (add-to-list 'load-path
+                                (concat emacs-root path))))
+  (add-path "emacs")
+  (add-path "emacs/arc"))
 
-(load "custom")
+(dolist (lib '("custom" "funcs" "keys" "arc-autoloads"))
+  (load lib))
 
 (when (display-graphic-p)
   (set-face-attribute 'default nil
                       :family "DejaVu Sans Mono")
-  (add-hook 'after-init-hook 'color-theme-solarized-dark))
-
-(global-set-key "\C-x\C-m" 'execute-extended-command)
-(global-set-key "\C-w" 'backward-kill-word)
-(global-set-key "\C-x\C-k" 'kill-region)
-(global-set-key "\C-c\C-a" 'mark-whole-buffer)
-(global-set-key "\C-x\C-b" 'buffer-menu)
+  (add-hook 'after-init-hook 'set-color-theme)
+  (add-hook 'after-init-hook 'pretty-lambda-for-modes))
 
 (put 'set-goal-column 'disabled nil)
 
 (ido-mode t)
 
+(defalias 'yes-or-no-p 'y-or-n-p)
+
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-(require 'hi-lock)
-(add-to-list 'hi-lock-face-defaults "hi-red")
+(add-hook 'after-save-hook 'recompile-elisp)
 
-(defun turn-off-echo ()
-  (setq comint-process-echoes t))
+(add-hook 'tabulated-list-mode-hook 'hl-line-mode)
+
+(eval-after-load "hi-lock"
+  '(add-to-list 'hi-lock-face-defaults "hi-red"))
 
 (add-hook 'inferior-python-mode-hook 'turn-off-echo)
 
@@ -33,37 +37,26 @@
   (add-hook 'inf-ruby-mode-hook 'turn-off-echo))
 
 (add-hook 'lisp-mode-hook
-          #'(lambda ()
-              (set (make-local-variable 'lisp-indent-function)
-                   'common-lisp-indent-function)))
+          (lambda ()
+            (set (make-local-variable 'lisp-indent-function)
+                 'common-lisp-indent-function)))
 
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation-mode)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 
-(defun add-hooks (hooks function &optional append local)
-  (dolist (hook hooks)
-    (add-hook hook function append local)))
+(add-to-list 'auto-mode-alist '("\\.arc$" . arc-mode))
 
-(add-hooks '(lisp-mode-hook
+(add-hook* '(lisp-mode-hook
              emacs-lisp-mode-hook
              scheme-mode-hook
              c-mode-common-hook
              ruby-mode-hook)
-           #'(lambda ()
-               (local-set-key (kbd "RET")
-                              'reindent-then-newline-and-indent)))
+           (lambda ()
+             (local-set-key (kbd "RET") 'newline-and-indent)))
 
 (autoload 'enable-paredit-mode "paredit")
-(add-hooks '(lisp-mode-hook
+(add-hook* '(lisp-mode-hook
              emacs-lisp-mode-hook
              scheme-mode-hook)
            'enable-paredit-mode)
-
-(defun eshell/emacs (&rest args)
-  "Open a file in emacs. Some habits die hard."
-  (if (null args)
-      (bury-buffer)
-    (mapc #'find-file (mapcar #'expand-file-name
-                              (eshell-flatten-list (reverse args)))))
-  nil)
 
 (eshell)
