@@ -56,7 +56,8 @@
 (autoload 'enable-paredit-mode "paredit")
 (add-hook* '(lisp-mode-hook
              emacs-lisp-mode-hook
-             scheme-mode-hook)
+             scheme-mode-hook
+             geiser-repl-mode-hook)
            'enable-paredit-mode)
 
 (eshell)
