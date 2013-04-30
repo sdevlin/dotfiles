@@ -5,7 +5,7 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-export EDITOR='emacs'
+export EDITOR='emacsclient -c -a ""'
 export HISTCONTROL='ignoredups'
 export GOPATH=$HOME/.local
 
@@ -29,7 +29,7 @@ alias grep='grep --color=auto'
 alias cuts='cut -d " "'
 alias cal='cal -3'
 alias whereami='curl ifconfig.me'
-alias e='emacsclient -c'
+alias e=$EDITOR
 
 fizzbuzz() {
     seq 100 | awk '
