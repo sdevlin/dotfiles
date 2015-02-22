@@ -20,18 +20,27 @@
   (dolist (hook hooks)
     (add-hook hook function append local)))
 
-(defun set-color-theme ()
-  (load-theme 'solarized-dark t))
+(defun package-install-if-missing (package)
+  (unless (package-installed-p package)
+    (package-install package)))
+
+(defun package-upgrade-all ()
+  (interactive)
+  (save-window-excursion
+    (list-packages)
+    (package-menu-mark-upgrades)
+    (package-menu-execute t)))
 
 (defun eshell/emacs (&rest args)
-  "Open a file in emacs. Some habits die hard."
+  "Open a file in emacs."
   (if (null args)
       (bury-buffer)
     (mapc 'find-file (mapcar 'expand-file-name
                              (eshell-flatten-list (reverse args)))))
   nil)
 
-(defun my-eshell-prompt-function ()
+(defun spd-eshell-prompt-function ()
+  "Eshell prompt like \"user@host:wd % \"."
   (let*
       ((user (or (getenv "USER")
                  user-login-name
@@ -44,7 +53,7 @@
        (wd (if (string= pwd "/")
                pwd
              (eshell/basename pwd)))
-       (sigil (if (= (user-uid) 0) "#" "$")))
+       (sigil (if (= (user-uid) 0) "#" "%")))
     (format "%s@%s:%s %s " user host wd sigil)))
 
 (defun recompile-elisp ()

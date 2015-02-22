@@ -6,37 +6,24 @@
 [[ $- != *i* ]] && return
 
 export EDITOR='emacsclient -c -a ""'
-export HISTCONTROL='ignoredups'
+export HISTCONTROL='ignoreboth'
 export GOPATH=$HOME/.local
+export MONO_GAC_PATH=/usr/local
 
 psgrep() { ps ax | grep -v grep | grep $1; }
 
-cmdfu() { wget -qO - "http://www.commandlinefu.com/commands/matching/$@/$(echo -n "$@" | openssl base64)/plaintext"; }
+export PATH=$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
 
-print_path() { echo $PATH | tr ':' '\n'; }
-
-add_to_path() {
-    if ! print_path | grep -x "$1" >/dev/null
-    then
-        export PATH=$1:$PATH
-    fi
-}
-
-add_to_path "$HOME/.local/bin"
-
-alias ls='ls --color=auto'
+# alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 alias cuts='cut -d " "'
 alias cal='cal -3'
 alias whereami='curl ifconfig.me'
 alias e=$EDITOR
 
-fizzbuzz() {
-    seq 100 | awk '
-        $0 % 15 == 0 { print "fizzbuzz"; next }
-        $0 % 3 == 0 { print "fizz"; next }
-        $0 % 5 == 0 { print "buzz"; next }
-        1';
-}
-
 PS1='\u@\h:\W \$ '
+
+if [ -f /usr/local/share/chruby/chruby.sh ]; then
+    source /usr/local/share/chruby/chruby.sh
+    chruby ruby-2.1.2
+fi
