@@ -7,7 +7,7 @@
   (add-path "emacs")
   (add-path "emacs/arc"))
 
-(dolist (lib '("custom" "funcs" "keys" "julia-mode" "arc-autoloads"))
+(dolist (lib '("custom" "funcs" "keys" "arc-autoloads"))
   (load lib))
 
 (when (not (display-graphic-p))
