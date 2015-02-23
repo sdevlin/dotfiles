@@ -18,7 +18,7 @@
                       :family "DejaVu Sans Mono")
   (add-hook 'after-init-hook 'pretty-lambda-for-modes))
 
-(load-theme 'wombat t)
+(load-theme 'zenburn t)
 
 (add-hook 'after-init-hook 'global-company-mode)
 (eval-after-load 'company
